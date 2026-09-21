@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#F6F0E4"/>
+  <!-- soft cards -->
+  <g>
+    <rect x="60" y="60" width="880" height="440" rx="24" fill="#FFFDF7" stroke="#E6D9BE" stroke-width="1.5"/>
+    <rect x="980" y="60" width="880" height="440" rx="24" fill="#FFFDF7" stroke="#E6D9BE" stroke-width="1.5"/>
+    <rect x="60" y="530" width="880" height="440" rx="24" fill="#FFFDF7" stroke="#E6D9BE" stroke-width="1.5"/>
+    <rect x="980" y="530" width="880" height="440" rx="24" fill="#FFFDF7" stroke="#E6D9BE" stroke-width="1.5"/>
+  </g>
+  <!-- thin gold dividers -->
+  <line x1="960" y1="80" x2="960" y2="950" stroke="#C9A86A" stroke-width="1.5" opacity="0.9"/>
+  <line x1="90" y1="515" x2="1830" y2="515" stroke="#C9A86A" stroke-width="1.5" opacity="0.9"/>
+  <!-- titles -->
+  <g font-family="Inter, Helvetica, Arial, sans-serif" fill="#1C2A44" font-weight="700" letter-spacing="4" text-anchor="middle">
+    <text x="500" y="145" font-size="40">FORÇAS</text>
+    <text x="1420" y="145" font-size="40">FRAQUEZAS</text>
+    <text x="500" y="615" font-size="40">OPORTUNIDADES</text>
+    <text x="1420" y="615" font-size="40">AMEAÇAS</text>
+  </g>
+  <g stroke="#C9A86A" stroke-width="2.5">
+    <line x1="470" y1="165" x2="530" y2="165"/>
+    <line x1="1390" y1="165" x2="1450" y2="165"/>
+    <line x1="470" y1="635" x2="530" y2="635"/>
+    <line x1="1390" y1="635" x2="1450" y2="635"/>
+  </g>
+  <!-- bullets: exactly 2 per quadrant -->
+  <g font-family="Inter, Helvetica, Arial, sans-serif" fill="#1C2A44" font-size="24">
+    <circle cx="130" cy="245" r="6" fill="#C9A86A"/>
+    <text x="155" y="253">Procura jovem — envelhec. Sesimbra 136,5 (2021) vs Portugal 182,1 (2021)</text>
+    <circle cx="130" cy="325" r="6" fill="#C9A86A"/>
+    <text x="155" y="333">Ecótono lagoa-pinhal + branco/telha + Nortada 4,1 m/s</text>
+
+    <circle cx="1050" cy="245" r="6" fill="#C9A86A"/>
+    <text x="1075" y="253">Baixo valor — Sesimbra IpC &lt;100 (2023) vs Setúbal &gt;100, G.Lisboa 127,6 (2023)</text>
+    <circle cx="1050" cy="325" r="6" fill="#C9A86A"/>
+    <text x="1075" y="333">Risco lote — Alto/M.Alto + sismo X + areia/freático sem geotecnia</text>
+
+    <circle cx="130" cy="715" r="6" fill="#C9A86A"/>
+    <text x="155" y="723">Crescimento — +5,8% 2011-21 (52.384 em 2021), 56.576 (2024)</text>
+    <circle cx="130" cy="795" r="6" fill="#C9A86A"/>
+    <text x="155" y="803">ZEC/ZPE + reuso (Carrilho 2024, EMYA 2021) + fundos</text>
+
+    <circle cx="1050" cy="715" r="6" fill="#C9A86A"/>
+    <text x="1075" y="723">Pressão — Setúbal 536,2 hab/km² (2021) + 110,6d ≥25°/ano</text>
+    <circle cx="1050" cy="795" r="6" fill="#C9A86A"/>
+    <text x="1075" y="803">APPS/REN + chuva 793,5mm (1991-2020) vs TMY 364mm</text>
+  </g>
+  <!-- footer -->
+  <rect x="0" y="996" width="1920" height="84" fill="#1C2A44"/>
+  <line x1="0" y1="996" x2="1920" y2="996" stroke="#C9A86A" stroke-width="2"/>
+  <text x="960" y="1048" font-family="Inter, Helvetica, Arial, sans-serif" font-size="23" fill="#F6F0E4" text-anchor="middle">Península de Setúbal | Sesimbra e Setúbal | 38.5133° N, 9.1604° W | 27 m | EPW Lisboa-Geof (085350, TMYx) | Köppen-Geiger Csb</text>
+</svg>

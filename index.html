@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Península de Setúbal - Grupo 8</title>
+<meta name="description" content="Análise de sítio — Lagoa de Albufeira, Sesimbra. Península de Setúbal, Grupo 8.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+:root{
+  --carbon:#1C2321; --fern:#60712F; --wisteria:#8FA6CB; --apricot:#F7E3AF; --copper:#C05746;
+  --cream:#FFFDF7; --paper:#F6F0E4; --line:rgba(28,35,33,.14);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--carbon);color:var(--apricot);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::selection{background:var(--copper);color:var(--cream)}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+#progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--copper);z-index:9999}
+#cursor{position:fixed;width:12px;height:12px;border-radius:50%;background:var(--copper);pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .25s,height .25s}
+#cursor.big{width:56px;height:56px;opacity:.85}
+@media(pointer:coarse){#cursor{display:none}}
+#loader{position:fixed;inset:0;background:var(--carbon);z-index:10000;display:flex;flex-direction:column;justify-content:space-between;padding:28px 32px;transition:transform .9s cubic-bezier(.76,0,.24,1)}
+#loader.done{transform:translateY(-100%)}
+#loader .top{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.22em;text-transform:uppercase;opacity:.7}
+#loader .mid{text-align:center}
+#loader .mid h1{font-family:'Fraunces',serif;font-weight:300;font-size:clamp(44px,9vw,124px);line-height:.95}
+#loader .count{font-family:'Space Grotesk';font-size:clamp(36px,5vw,64px);text-align:right}
+#loader .bar{height:1px;background:rgba(247,227,175,.2);position:relative}
+#loader .bar i{position:absolute;left:0;top:0;height:100%;background:var(--apricot);width:0%}
+nav{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;align-items:center;justify-content:space-between;padding:16px 24px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;mix-blend-mode:difference;color:#fff}
+nav .links{display:flex;gap:20px}
+nav .links a{opacity:.65}nav .links a:hover{opacity:1}
+#menuBtn{border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:8px 18px;background:transparent;color:#fff;cursor:pointer;font-size:11px;letter-spacing:.2em}
+#overlay{position:fixed;inset:0;background:var(--apricot);color:var(--carbon);z-index:950;transform:translateY(-100%);transition:transform .7s cubic-bezier(.76,0,.24,1);display:flex;flex-direction:column;justify-content:center;padding:60px 6vw}
+#overlay.open{transform:translateY(0)}
+#overlay a.big{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,60px);line-height:1.05;border-bottom:1px solid var(--line);padding:10px 0;display:flex;justify-content:space-between;align-items:center}
+#overlay a.big small{font-family:'Inter';font-size:12px;letter-spacing:.15em}
+#overlayClose{position:absolute;top:22px;right:28px;border:1px solid var(--carbon);border-radius:999px;padding:8px 18px;background:transparent;cursor:pointer}
+#dots{position:fixed;right:16px;top:50%;transform:translateY(-50%);z-index:800;display:flex;flex-direction:column;gap:10px}
+#dots a{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.25}
+#dots a.active{opacity:1;background:var(--copper);transform:scale(1.4)}
+section{position:relative;padding:96px 6vw}
+.label{font-size:11px;letter-spacing:.25em;text-transform:uppercase;opacity:.7;margin-bottom:18px}
+h2.display{font-family:'Fraunces',serif;font-weight:300;font-size:clamp(34px,5.5vw,80px);line-height:1;letter-spacing:-.02em;margin-bottom:16px}
+.sub{max-width:760px;font-size:14.5px;line-height:1.7;opacity:.85}
+.reveal{overflow:hidden}.reveal span{display:block;transform:translateY(110%)}
+#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0;overflow:hidden;background:var(--carbon)}
+#heroBg{position:absolute;inset:0;overflow:hidden}
+#heroBg img{width:100%;height:120%;object-fit:cover;opacity:.5}
+#heroBg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(28,35,33,.4),rgba(28,35,33,.15) 45%,rgba(28,35,33,.9))}
+#heroInner{position:relative;z-index:2;padding:110px 6vw 36px}
+.hero-top{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:14px;opacity:.85;flex-wrap:wrap;gap:8px}
+.hero-title{font-family:'Fraunces',serif;font-weight:300;font-size:clamp(52px,11vw,170px);line-height:.88;text-transform:uppercase;letter-spacing:-.03em}
+.hero-title .outline{color:transparent;-webkit-text-stroke:1.5px var(--apricot)}
+.hero-title .grupo8{color:var(--wisteria);-webkit-text-stroke:0;font-style:italic;text-transform:none;letter-spacing:-.02em}
+.hero-names{margin-top:14px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;opacity:.85;line-height:1.8}
+.hero-names span{white-space:nowrap}
+.hero-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px;border-top:1px solid rgba(247,227,175,.25);padding-top:16px;font-size:12.5px;line-height:1.6}
+.hero-meta b{display:block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;opacity:.6;margin-bottom:6px}
+.marquee{background:var(--copper);color:var(--cream);overflow:hidden;white-space:nowrap;padding:12px 0;font-size:12px;letter-spacing:.22em;text-transform:uppercase}
+.marquee .track{display:inline-block;animation:mq 24s linear infinite}
+@keyframes mq{to{transform:translateX(-50%)}}
+#conceito{background:var(--apricot);color:var(--carbon)}
+#conceito .frase{font-family:'Fraunces',serif;font-size:clamp(24px,3.8vw,52px);line-height:1.1;max-width:1000px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:40px}
+.stat{background:var(--apricot);padding:22px}
+.stat .num{font-family:'Space Grotesk';font-size:clamp(26px,3vw,44px);font-weight:700}
+.stat .cap{font-size:12px;margin-top:8px;line-height:1.55;opacity:.75}
+#index{background:var(--cream);color:var(--carbon)}
+.work-row{display:grid;grid-template-columns:60px 1fr auto;align-items:center;gap:16px;padding:22px 0;border-top:1px solid var(--line);cursor:pointer;transition:.3s}
+.work-row:last-child{border-bottom:1px solid var(--line)}
+.work-row:hover{background:var(--carbon);color:var(--apricot);padding-left:14px;padding-right:14px}
+.work-row h3{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(20px,3vw,40px)}
+.work-row .tag{font-size:11px;letter-spacing:.15em;text-transform:uppercase;border:1px solid currentColor;border-radius:999px;padding:7px 14px;white-space:nowrap}
+#p1{background:var(--paper);color:var(--carbon)}
+.grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:40px}
+.table{width:100%;border-collapse:collapse;font-size:13px;line-height:1.55;margin-top:16px;background:#fff;border:1px solid var(--line)}
+.table th{background:var(--carbon);color:var(--apricot);text-align:left;padding:11px;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.table td{padding:11px;border-top:1px solid var(--line);vertical-align:top}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px}
+.card h4{font-size:12px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px}
+.card p{font-size:13.5px;line-height:1.65}
+.card .src{margin-top:10px;font-size:11px;opacity:.6;line-height:1.5}
+.card .imp{margin-top:10px;font-size:12.5px;background:var(--paper);border-left:3px solid var(--copper);padding:10px 12px;border-radius:0 12px 12px 0}
+#p2{background:var(--carbon);color:var(--apricot)}
+.sticky-wrap{display:grid;grid-template-columns:.95fr 1.05fr;gap:36px;align-items:start;margin-top:28px}
+.sticky-imgs{position:sticky;top:84px;display:flex;flex-direction:column;gap:14px}
+.sticky-imgs figure{border-radius:16px;overflow:hidden;border:1px solid rgba(247,227,175,.2)}
+.sticky-imgs img{width:100%}
+.sticky-imgs figcaption{font-size:11px;padding:10px 14px;opacity:.7;background:rgba(0,0,0,.35)}
+.cards9{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+.cards9 .card{background:#222B29;border-color:rgba(247,227,175,.15);color:var(--apricot)}
+.cards9 .card .imp{background:rgba(247,227,175,.08);color:var(--apricot)}
+/* paleta interativa */
+#paletaTrigger{cursor:pointer}
+#paletaTrigger:hover{border-color:var(--copper)}
+#paletaTrigger .abrir{display:inline-block;margin-top:12px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;border:1px solid var(--copper);color:var(--apricot);border-radius:999px;padding:8px 16px}
+#paletaModal{position:fixed;inset:0;z-index:960;background:rgba(28,35,33,.72);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .35s;overflow-y:auto;padding:5vh 4vw}
+#paletaModal.open{opacity:1;pointer-events:auto}
+.paleta-box{max-width:880px;margin:0 auto;background:#222B29;color:var(--apricot);border:1px solid rgba(247,227,175,.2);border-radius:22px;overflow:hidden}
+.paleta-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:22px 24px;border-bottom:1px solid rgba(247,227,175,.15)}
+.paleta-head h3{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(22px,3vw,32px)}
+.paleta-head p{font-size:12px;opacity:.65;margin-top:4px}
+#paletaClose{background:transparent;color:var(--apricot);border:1px solid rgba(247,227,175,.4);border-radius:999px;padding:8px 18px;cursor:pointer;font-size:11px;letter-spacing:.15em;white-space:nowrap}
+.cor{border-bottom:1px solid rgba(247,227,175,.12)}
+.cor:last-child{border-bottom:none}
+.cor-head{width:100%;display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;background:transparent;border:none;color:var(--apricot);cursor:pointer;padding:16px 24px;text-align:left;font-family:'Inter',sans-serif}
+.cor-head .mostra{width:64px;height:48px;border-radius:12px;border:1px solid rgba(255,255,255,.25)}
+.cor-head b{display:block;font-size:14px}
+.cor-head small{font-size:11.5px;opacity:.65;font-family:'Space Grotesk'}
+.cor-head .mais{font-size:20px;opacity:.6;transition:transform .3s}
+.cor.open .cor-head .mais{transform:rotate(45deg)}
+.cor-body{display:none;padding:0 24px 22px}
+.cor.open .cor-body{display:block}
+.cor-body figure{border-radius:14px;overflow:hidden;border:1px solid rgba(247,227,175,.15)}
+.cor-body img{width:100%;height:auto}
+.cor-body figcaption{font-size:12px;line-height:1.65;padding:12px 2px 0;opacity:.9}
+.cor-body figcaption a{text-decoration:underline;text-underline-offset:3px}
+.cor-body figcaption a:hover{color:var(--copper)}
+#hwrap{background:var(--fern);color:#fff;overflow:hidden;padding:90px 0}
+#htrack{display:flex;gap:16px;padding:0 6vw;width:max-content}
+.hcard{width:min(400px,80vw);background:var(--cream);color:var(--carbon);border-radius:20px;overflow:hidden;flex-shrink:0}
+.hcard .ph{height:200px;overflow:hidden}.hcard .ph img{width:100%;height:100%;object-fit:cover}
+.hcard .tx{padding:22px}.hcard .tx h4{font-family:'Fraunces',serif;font-size:24px;margin:8px 0}
+.hcard .tx p{font-size:13.5px;line-height:1.6}
+#p3{background:var(--wisteria);color:var(--carbon)}
+.clima-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:24px}
+.meter{background:rgba(255,255,255,.75);border-radius:16px;padding:20px;border:1px solid rgba(0,0,0,.08)}
+.meter h4{font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.meter p{font-size:13px;line-height:1.6}
+.bar{height:10px;background:rgba(28,35,33,.12);border-radius:999px;margin-top:12px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--carbon);border-radius:999px}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.rule{background:var(--carbon);color:var(--apricot);border-radius:16px;padding:22px}
+.rule p{font-size:13.5px;line-height:1.65;margin-top:8px}
+#p4{background:var(--cream);color:var(--carbon)}
+.vgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px}
+#p5{background:var(--paper);color:var(--carbon)}
+.swot-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+.q{background:#FFFDF7;border:1.5px solid #E6D9BE;border-radius:20px;padding:24px;position:relative;overflow:hidden}
+.q::before{content:'';position:absolute;left:0;top:0;bottom:0;width:6px}
+.q.f::before{background:var(--fern)}.q.w::before{background:var(--copper)}.q.o::before{background:var(--wisteria)}.q.t::before{background:var(--carbon)}
+.q h3{letter-spacing:.2em;font-size:13px;margin-bottom:14px}
+.q li{list-style:none;font-size:13.5px;line-height:1.6;margin-bottom:10px;padding-left:20px;position:relative}
+.q li::before{content:'';position:absolute;left:0;top:8px;width:8px;height:8px;border-radius:50%;background:var(--copper)}
+#p6{background:var(--carbon);color:var(--apricot)}
+#p6 .card{background:#222B29;border-color:rgba(247,227,175,.15);color:var(--apricot)}
+#p6 .card .imp{background:rgba(247,227,175,.08);color:var(--apricot)}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+.acc{border-top:1px solid var(--line);margin-top:24px}
+.acc details{border-bottom:1px solid var(--line);padding:14px 0}
+.acc summary{cursor:pointer;font-weight:600;font-size:14px;list-style:none;display:flex;justify-content:space-between}
+.acc summary::-webkit-details-marker{display:none}
+.acc details p{font-size:13.5px;line-height:1.65;margin-top:8px;opacity:.85}
+.badge{font-size:10px;letter-spacing:.18em;text-transform:uppercase;border:1px solid currentColor;border-radius:999px;padding:5px 12px;display:inline-block;margin-bottom:10px}
+.kpi{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.kpi div{background:var(--carbon);color:var(--apricot);border-radius:12px;padding:12px 16px;font-size:12px}
+.kpi div b{display:block;font-size:17px;font-family:'Space Grotesk'}
+.src-note{font-size:11px;opacity:.6;margin-top:12px;line-height:1.6}
+#fim{background:var(--apricot);color:var(--carbon);padding:100px 6vw 32px}
+footer{border-top:1px solid var(--line);margin-top:40px;padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.7}
+@media(max-width:900px){.grid2,.sticky-wrap,.clima-grid,.rules,.vs{grid-template-columns:1fr}.vgrid,.swot-grid,.cards9{grid-template-columns:1fr}.hero-meta,.stats{grid-template-columns:1fr 1fr}nav .links,#dots{display:none}.sticky-imgs{position:static}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="cursor"></div>
+
+<div id="loader">
+  <div class="top"><span>Grupo 8 — Análise de sítio</span><span>2026</span></div>
+  <div class="mid"><h1>PENÍNSULA DE SETÚBAL</h1><p style="letter-spacing:.25em;font-size:11px;margin-top:10px;opacity:.7">GRUPO 8 — SESIMBRA E SETÚBAL</p></div>
+  <div><div class="count"><span id="loadNum">0</span>%</div><div class="bar"><i id="loadBar"></i></div></div>
+</div>
+
+<nav>
+  <div><b>Península de Setúbal — Grupo 8</b></div>
+  <div class="links">
+    <a href="#p1">P1</a><a href="#p2">P2</a><a href="#p3">P3</a><a href="#p4">P4</a><a href="#p5">P5</a><a href="#p6">P6</a>
+  </div>
+  <button id="menuBtn">ÍNDICE +</button>
+</nav>
+
+<div id="overlay">
+  <button id="overlayClose">FECHAR ×</button>
+  <p class="label">Índice</p>
+  <a class="big" href="#p1">P1 — Enquadramento <small>NUTS · socioeconomia</small></a>
+  <a class="big" href="#p2">P2 — Leitura do lugar <small>imagem base e registo próprio</small></a>
+  <a class="big" href="#p3">P3 — Caracterização climática <small>EPW · IPMA · Csb</small></a>
+  <a class="big" href="#p4">P4 — Cultura arquitetónica <small>território</small></a>
+  <a class="big" href="#p5">P5 — SWOT <small>matriz</small></a>
+  <a class="big" href="#p6">P6 — Proposta <small>volumetria · programa</small></a>
+</div>
+
+<div id="dots">
+  <a href="#hero"></a><a href="#conceito"></a><a href="#p1"></a><a href="#p2"></a><a href="#p3"></a><a href="#p4"></a><a href="#p5"></a><a href="#p6"></a>
+</div>
+
+<section id="hero">
+  <div id="heroBg"><img src="imagens/ortofoto.png" alt="Vista oblíqua do sítio — Lagoa de Albufeira"></div>
+  <div id="heroInner">
+    <div class="hero-top"><span>Grupo 8 — NUTS III Península de Setúbal</span><span>38.5133° N, 9.1604° W — 27 m</span></div>
+    <h1 class="hero-title"><span class="reveal"><span>Península</span></span><span class="reveal"><span class="outline">de Setúbal</span></span><span class="reveal"><span class="grupo8">— grupo 8</span></span></h1>
+    <div class="hero-names"><span>Isabella Misiec · 20221001</span> &nbsp;—&nbsp; <span>Nuno Heleno · 20181310</span> &nbsp;—&nbsp; <span>Giovanna Meneghel · 20221006</span></div>
+    <div class="hero-meta">
+      <div><b>Sítio</b>38°30'48.0"N, 9°09'37.6"W<br>Sesimbra, freg. Castelo — margem N da Lagoa de Albufeira. Altitude 27 m (Google Earth, 20/09/2026).</div>
+      <div><b>Municípios em estudo</b>Sesimbra e Setúbal.<br>Sesimbra: 3 freguesias. Setúbal: 5 freguesias.</div>
+      <div><b>NUTS</b>NUTS I Continente. NUTS II / III Península de Setúbal PT172 (desde 01/01/2024). 9 municípios, 37 freguesias.</div>
+      <div><b>Base documental</b>MD de análise P0–P6. Imagens: maps_1km, maps_500m, ortofoto. Clima: EPW Lisboa-Geof + IPMA 1991–2020.</div>
+    </div>
+  </div>
+</section>
+<div class="marquee"><div class="track">&nbsp; SESIMBRA · SETÚBAL · LAGOA DE ALBUFEIRA · 38.5133° N, 9.1604° W · 27 M · NUTS III PT172 · CSB · NORTADA N-NW ·&nbsp; SESIMBRA · SETÚBAL · LAGOA DE ALBUFEIRA · 38.5133° N, 9.1604° W · 27 M · NUTS III PT172 · CSB · NORTADA N-NW ·</div></div>
+
+<section id="conceito">
+  <p class="label">Conceito — síntese P1</p>
+  <p class="frase">Charneira atlântica Arrábida–Espichel: conter a expansão, ancorar o valor metropolitano na paisagem protegida.</p>
+  <div class="stats">
+    <div class="stat"><div class="num"><span class="countUp" data-to="848507">0</span></div><div class="cap">hab. NUTS III, 2024 (INE 0012918). Área 1 625,25 km² (INE 0011866).</div></div>
+    <div class="stat"><div class="num">+<span class="countUp" data-to="5.8" data-dec="1">0</span>%</div><div class="cap">Sesimbra 2011–2021; 56 576 hab. em 2024 (INE 0012918).</div></div>
+    <div class="stat"><div class="num"><span class="countUp" data-to="136.5" data-dec="1">0</span></div><div class="cap">Envelhecimento Sesimbra 2021 (INE Censos). Portugal 182,1.</div></div>
+    <div class="stat"><div class="num"><span class="countUp" data-to="110.6" data-dec="1">0</span></div><div class="cap">dias/ano TX≥25 °C (IPMA 1991–2020).</div></div>
+  </div>
+</section>
+
+<section id="index">
+  <p class="label">Índice</p>
+  <h2 class="display">P1 a P6</h2>
+  <p class="sub">Conteúdo da análise de sítio. Estrutura geral, a completar à medida do desenvolvimento do projeto.</p>
+  <div style="margin-top:20px">
+    <div class="work-row" data-goto="#p1"><span>01</span><h3>P1 — Enquadramento e socioeconomia</h3><span class="tag">NUTS · INE</span></div>
+    <div class="work-row" data-goto="#p2"><span>02</span><h3>P2 — Leitura do lugar: imagem base e registo próprio</h3><span class="tag">Sítio</span></div>
+    <div class="work-row" data-goto="#p3"><span>03</span><h3>P3 — Caracterização climática</h3><span class="tag">EPW · IPMA</span></div>
+    <div class="work-row" data-goto="#p4"><span>04</span><h3>P4 — Cultura arquitetónica do território</h3><span class="tag">Vernáculo · obras</span></div>
+    <div class="work-row" data-goto="#p5"><span>05</span><h3>P5 — SWOT</h3><span class="tag">Matriz</span></div>
+    <div class="work-row" data-goto="#p6"><span>06</span><h3>P6 — Volumetria e programa</h3><span class="tag">Proposta</span></div>
+  </div>
+</section>
+
+<section id="p1">
+  <p class="label">P1 — Enquadramento NUTS e caracterização socioeconómica</p>
+  <h2 class="display">Enquadramento</h2>
+  <div class="grid2">
+    <div>
+      <p class="sub">NUTS I: Continente. NUTS II: Península de Setúbal PT172 (Regulamento Delegado UE 2023/674, desde 01/01/2024). NUTS III coincidente. 9 municípios: Alcochete, Almada, Barreiro, Moita, Montijo, Palmela, Seixal, Sesimbra, Setúbal. Função regional: sul metropolitano de Lisboa — porto, logística/indústria, turismo-natureza, expansão residencial.</p>
+      <div class="kpi"><div><b>1 625,25 km²</b>NUTS III — INE 0011866</div><div><b>848 507 hab.</b>NUTS III 2024 — INE 0012918</div><div><b>15 320 M€</b>PIB 2024 — 18 205 €/cap</div></div>
+      <table class="table">
+        <tr><th>Indicador</th><th>Sesimbra</th><th>Setúbal</th></tr>
+        <tr><td>Área</td><td>195,47 km² (CAOP/DGT)</td><td>230,33 km² (CM Setúbal)</td></tr>
+        <tr><td>Pop. 2021 (Censos)</td><td>52 394 hab.</td><td>123 496 hab.</td></tr>
+        <tr><td>Pop. 2024 (INE 0012918)</td><td>56 576 hab.</td><td>124 339 hab.</td></tr>
+        <tr><td>Variação 2011–2021</td><td>+5,8% (49 500 → 52 384)</td><td>+1,9% (121 185 → 123 496)</td></tr>
+        <tr><td>Envelhecimento 2021</td><td>136,5</td><td>162,7 (PT 182,1)</td></tr>
+        <tr><td>Densidade</td><td>~268 hab/km²</td><td>536,2 hab/km²</td></tr>
+        <tr><td>Escolaridade</td><td>Secundário 85,8% (2022/23)</td><td>Analfabetismo 2,6% (2021)</td></tr>
+        <tr><td>Poder compra 2023 (PT=100)</td><td>&lt;100</td><td>&gt;100 (G. Lisboa 127,6)</td></tr>
+      </table>
+      <p class="src-note">Fontes: INE 0011866, 0012918, Censos 2021, EPCC 2025 (0014580); Pordata 390, 458, 207, 222/835 (fonte primária INE). Coordenadas: 38,5133°N e 9,1604°W verificadas por conversão DMS→decimal; altitude 27 m plausível, erro típico ±2–5 m.</p>
+    </div>
+    <div>
+      <div class="card"><h4>Síntese P1 (5 pontos)</h4><p>1. NUTS II = NUTS III desde 2024.<br>2. Sesimbra cresce mais (+5,8%) que Setúbal (+1,9%).<br>3. Envelhecimento contido: 136,5 vs 162,7 vs 182,1 PT.<br>4. Setúbal denso (536,2); Sesimbra difuso (~268).<br>5. Poder de compra fraturado: Sesimbra &lt;100, Setúbal &gt;100.</p></div>
+      <!-- Reservado: acrescentar quadros INE/Pordata detalhados -->
+    </div>
+  </div>
+</section>
+
+<section id="p2">
+  <p class="label">P2 — Leitura do lugar: imagem base e registo próprio</p>
+  <h2 class="display">Leitura do lugar</h2>
+  <p class="sub">Margem N da Lagoa de Albufeira (Aiana de Baixo / Casa do Infantado). N377 a E, Atlântico a W (~400–600 m). Ortofoto oblíqua 22/04/2024. Sem fotografias próprias do sítio.</p>
+  <div class="sticky-wrap">
+    <div class="sticky-imgs">
+      <figure><img src="imagens/ortofoto.png" alt="Ortofoto"><figcaption>ortofoto.png — Google Earth, 22/04/2024</figcaption></figure>
+      <figure><img src="imagens/maps_500m.png" alt="Mapa 500 m"><figcaption>maps_500m.png — Google Maps, 20/09/2026</figcaption></figure>
+      <figure><img src="imagens/maps_1km.png" alt="Mapa 1 km"><figcaption>maps_1km.png — Google Maps, 20/09/2026</figcaption></figure>
+    </div>
+    <div>
+      <p class="sub"><b>Figura-fundo (P2):</b> tapete de pinhal contínuo perfurado por clareiras de moradias em grelha N-S; fundo de floresta-duna-lagoa-mar. A 1 km: lagoa a N, oceano a W, N377 a E.</p>
+      <div class="cards9">
+        <div class="card" id="paletaTrigger" role="button" tabindex="0" title="Abrir paleta cromática interativa"><h4>1 · Paleta cromática</h4><p>Verde-pinheiro, ocre-areia, terracota, branco, azul-negro.</p><div class="imp">Materiais mate; telha e cal como regra.</div><span class="abrir">Abrir paleta interativa +</span></div>
+        <div class="card"><h4>2 · Solos</h4><p>Areias pliocénicas, dunas, arriba fóssil, aluviões. Infiltração alta, erodíveis, freático alto.</p><div class="imp">Fundação leve; evitar subsolos e impermeabilização.</div></div>
+        <div class="card"><h4>3 · Vegetação e fauna</h4><p>Pinhal bravo, zimbral, dunas, caniçal. ZEC 4318 ha + ZPE + Ramsar. Espécies: Armeria rouyana, cágado, boga-portuguesa, aves da Lagoa Pequena.</p><div class="imp">Buffer 50–100 m; inventário de campo em falta.</div></div>
+        <div class="card"><h4>4 · Risco sísmico</h4><p>Intensidade máx. X Mercalli. Referência 6,1 Richter / VII MM.</p><div class="imp">Dimensionar EC8; solo provável D/E.</div></div>
+        <div class="card"><h4>5 · Risco de cheia</h4><p>Sem risco elevado direto (PULA); cota 27 m. Condicionantes REN e galgamento costeiro.</p><div class="imp">Soleira +0,5–1,0 m; SuDS.</div></div>
+        <div class="card"><h4>6 · Incêndio</h4><p>Interface urbano-florestal. Sesimbra: 658 ha alto + 2706 ha muito alto. Regime APPS.</p><div class="imp">Faixas 50/100 m; 2 acessos.</div></div>
+        <div class="card"><h4>7 · Poluição e ruído</h4><p>Fontes difusas: N377/N378, sazonalidade, fossas antigas. Sem indústria pesada visível.</p><div class="imp">A medir: dB, água, solo.</div></div>
+        <div class="card"><h4>8 · Serviços</h4><p>Espaço Interpretativo, Natura Park, praias. Sem escola/saúde a 500 m; Aiana 2–4 km, Sesimbra 8–12 km.</p><div class="imp">Prever mínimo diário + transporte.</div></div>
+        <div class="card" style="grid-column:1/-1"><h4>9 · Edificado</h4><p>Moradias isoladas 1–2 pisos, paredes brancas, telha cerâmica, muros baixos, loteamentos 1970–90.</p><p class="src">Não verificável sem vistoria: idade, sistema construtivo, patologia.</p></div>
+      </div>
+      <!-- Reservado: levantamento de campo, fotos próprias, sondagens -->
+    </div>
+  </div>
+</section>
+
+<div id="paletaModal" aria-hidden="true">
+  <div class="paleta-box">
+    <div class="paleta-head">
+      <div><h3>Paleta cromática — P2</h3><p>5 cores do lugar. Selecionar uma cor para ver a imagem de referência.</p></div>
+      <button id="paletaClose">FECHAR ×</button>
+    </div>
+    <div class="cor">
+      <button class="cor-head"><span class="mostra" style="background:#60712F"></span><span><b>Vegetação — verde-pinheiro</b><small>60712F · Fern</small></span><span class="mais">+</span></button>
+      <div class="cor-body"><figure><img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Juncos%20e%20pinheiros.jpg?width=1400" alt="Caniçal e pinheiros na margem da Lagoa de Albufeira"><figcaption>Caniçal e pinheiros na margem da Lagoa de Albufeira, Sesimbra. Fotografia: Maria JA Pinheiro, 2019, CC BY-SA 4.0. <a href="https://commons.wikimedia.org/wiki/File:Juncos%20e%20pinheiros.jpg" target="_blank" rel="noopener">Ver fonte no Wikimedia Commons ↗</a></figcaption></figure></div>
+    </div>
+    <div class="cor">
+      <button class="cor-head"><span class="mostra" style="background:#8FA6CB"></span><span><b>Água — azul-negro</b><small>8FA6CB · Wisteria Blue</small></span><span class="mais">+</span></button>
+      <div class="cor-body"><figure><img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Lagoa%20Albufeira%20March%202015-1.jpg?width=1400" alt="Barcos de pesca na Lagoa de Albufeira"><figcaption>Barcos de pesca na Lagoa de Albufeira, Sesimbra. Fotografia: Alvesgaspar, 2015, CC BY-SA 4.0 (imagem de qualidade). <a href="https://commons.wikimedia.org/wiki/File:Lagoa%20Albufeira%20March%202015-1.jpg" target="_blank" rel="noopener">Ver fonte no Wikimedia Commons ↗</a></figcaption></figure></div>
+    </div>
+    <div class="cor">
+      <button class="cor-head"><span class="mostra" style="background:#F7E3AF"></span><span><b>Areia / cal — ocre-areia, branco</b><small>F7E3AF · Light Apricot</small></span><span class="mais">+</span></button>
+      <div class="cor-body"><figure><img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Vista%20de%20Sesimbra%20-%20vila%20-%20praia%20-%20fortaleza.JPG?width=1400" alt="Vila, praia e Fortaleza de Santiago em Sesimbra"><figcaption>Vila, praia e Fortaleza de Santiago, Sesimbra: areal, casas caiadas e pedra. Fotografia: Paulo Juntas, 2007, CC BY-SA 2.5. <a href="https://commons.wikimedia.org/wiki/File:Vista%20de%20Sesimbra%20-%20vila%20-%20praia%20-%20fortaleza.JPG" target="_blank" rel="noopener">Ver fonte no Wikimedia Commons ↗</a></figcaption></figure></div>
+    </div>
+    <div class="cor">
+      <button class="cor-head"><span class="mostra" style="background:#C05746"></span><span><b>Telha — terracota</b><small>C05746 · Rosy Copper</small></span><span class="mais">+</span></button>
+      <div class="cor-body"><figure><img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Sesimbra%20vista%20geral.JPG?width=1400" alt="Vista geral de Sesimbra com telhados de telha"><figcaption>Vista geral de Sesimbra: casario com telhados de telha cerâmica. Fotografia: Sacavem (Filipe Rocha), 2006, domínio público. <a href="https://commons.wikimedia.org/wiki/File:Sesimbra%20vista%20geral.JPG" target="_blank" rel="noopener">Ver fonte no Wikimedia Commons ↗</a></figcaption></figure></div>
+    </div>
+    <div class="cor">
+      <button class="cor-head"><span class="mostra" style="background:#1C2321"></span><span><b>Base — sombra, pedra</b><small>1C2321 · Carbon Black</small></span><span class="mais">+</span></button>
+      <div class="cor-body"><figure><img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Castelo%20de%20Sesimbra%20-%20vista%20exterior.JPG?width=1400" alt="Castelo de Sesimbra, vista exterior"><figcaption>Castelo de Sesimbra, vista exterior: pedra e sombra (Monumento Nacional, 1910). Fotografia: Sacavem (Filipe Rocha), 2006, domínio público. <a href="https://commons.wikimedia.org/wiki/File:Castelo%20de%20Sesimbra%20-%20vista%20exterior.JPG" target="_blank" rel="noopener">Ver fonte no Wikimedia Commons ↗</a></figcaption></figure></div>
+    </div>
+  </div>
+</div>
+
+<div id="hwrap">
+  <p class="label" style="padding:0 6vw;color:#fff">Pistas de projeto P2</p>
+  <div id="htrack">
+    <div class="hcard"><div class="ph"><img src="imagens/maps_500m.png" alt=""></div><div class="tx"><span class="badge">Pista 1</span><h4>Ecótono habitado</h4><p>Faixa de bosque-comum junto à lagoa (corta-fogo/cheia): passadiço, charco, observatório. Construir a S.</p></div></div>
+    <div class="hcard"><div class="ph"><img src="imagens/ortofoto.png" alt=""></div><div class="tx"><span class="badge">Pista 2</span><h4>Casa-pátio duna</h4><p>Tipologia térrea em L em torno do pinhal existente; fundação leve; cisterna e fossa ecológica.</p></div></div>
+    <div class="hcard"><div class="ph"><img src="imagens/maps_1km.png" alt=""></div><div class="tx"><span class="badge">Pista 3</span><h4>Rua-parque N-S</h4><p>Acalmia de via, SuDS, iluminação âmbar, ligação praia–lagoa–N377 a pé/bici.</p></div></div>
+  </div>
+</div>
+
+<section id="p3">
+  <p class="label">P3 — Caracterização climática (EPW × IPMA × Csb)</p>
+  <h2 class="display">Caracterização climática</h2>
+  <p class="sub">Estação Lisboa-Geofísico 535 (77 m), a ~22,9 km, Δalt +50 m. Normal IPMA 1991–2020 + EPW TMY 1990–2023 + Köppen-Geiger Csb (verão seco temperado; inverno húmido suave).</p>
+  <div class="clima-grid">
+    <div class="meter"><h4>Semanas mais quentes</h4><p>Pico início–meados agosto. Ago TT 23,8 / TX 28,8 / TN 18,8. Extremo 43,3 °C (04/08/2018).</p><div class="bar"><i data-w="88"></i></div></div>
+    <div class="meter"><h4>Vento de verão</h4><p>N 42,6% + NW 31,6% (Jun–Set), média 4,1 m/s. Atravessamento N↔S.</p><div class="bar"><i data-w="74"></i></div></div>
+    <div class="meter"><h4>Precipitação</h4><p>Ano IPMA 793,5 mm (Nov–Jan concentrado); TMY 364 mm — não usar EPW para água. Jul 2,6 mm; Ago 5,4 mm.</p><div class="bar"><i data-w="57"></i></div></div>
+    <div class="meter"><h4>Noites frias</h4><p>TN Jan 8,6 °C; TN&lt;0: 0 dias/ano. Sem geada. Amplitude dia-noite 10–12 K.</p><div class="bar"><i data-w="22"></i></div></div>
+    <div class="meter"><h4>Sombreamento</h4><p>Necessário Mai–Set; crítico 29 Jun–15 Set. 110,6 dias TX≥25/ano; 33,2 dias TX≥30.</p><div class="bar"><i data-w="95"></i></div></div>
+    <div class="meter"><h4>Correção para o sítio</h4><p>Lagoa-pinhal-mar: tardes −1–2 K, noites húmidas + nevoeiro. Não aplicar ilha de calor de Lisboa.</p><div class="bar"><i data-w="40"></i></div></div>
+  </div>
+  <div class="rules">
+    <div class="rule"><span class="badge">R1 — Barra fina N-S</span><p>Profundidade ≤7 m; massa a E; vidro a S com pala e a N para brisa; W ≤10% com brise; beiral 80 cm; telha ventilada clara.</p></div>
+    <div class="rule"><span class="badge">R2 — Pátio a N-NW</span><p>Planta em L; quartos a E, estar a S, serviços a W; cisterna sob pátio; sem subsolo.</p></div>
+  </div>
+  <p class="src-note">Divergências: mês mais chuvoso Mar (TMY) vs Nov (Normal); médias ±0,3–1,1 K. Não verificável: vento/humidade à escala do lote, brisa horária, sombra dos pinheiros.</p>
+  <!-- Reservado: mini-estação local, modelo de sombra, ensaio de infiltração -->
+</section>
+
+<section id="p4">
+  <p class="label">P4 — Cultura arquitetónica do território</p>
+  <h2 class="display">Cultura arquitetónica</h2>
+  <div class="vgrid">
+    <div class="card"><span class="badge">Regra 1</span><p><b>Caiar + telha + vãos pequenos.</b> Ex.: casario da Santiago, Sesimbra.</p><p class="src">arrabidaparquemarinho.ualg.pt · patrimonios.pt</p></div>
+    <div class="card"><span class="badge">Regra 2</span><p><b>Construção dunar leve (estorno/tabuado).</b> Ex.: Fonte da Telha, Castelo.</p><p class="src">Fonte secundária; a confirmar em Oliveira &amp; Galhano.</p></div>
+    <div class="card"><span class="badge">Regra 3</span><p><b>Quinta-pátio com tanque e pérgola.</b> Ex.: Quinta da Bacalhôa, Azeitão (MN).</p><p class="src">e-cultura.pt · DGPC 70212</p></div>
+  </div>
+  <div class="vgrid" style="grid-template-columns:1fr 1fr">
+    <div class="card" style="background:var(--carbon);color:var(--apricot)"><span class="badge">Obra 1</span><p><b>Convento de Jesus, Setúbal — Carrilho da Graça — reabertura 2024.</b> Reabilitação 2012–2024. Prémio Ruy d’Athouguia 2026.</p><p class="src">noticias.mun-setubal.pt</p></div>
+    <div class="card" style="background:var(--carbon);color:var(--apricot)"><span class="badge">Obra 2</span><p><b>Casa em Sesimbra — ARX Portugal — ano n/c.</b> Mantém figura planimétrica; piso enterrado; cobertura-terreno.</p><p class="src">arx.pt/projecto/casa-em-sesimbra</p></div>
+  </div>
+  <div class="card" style="margin-top:14px"><span class="badge">Tendência</span><p><b>Reuso mínimo + museografia do mar.</b> Ex.: Museu Marítimo de Sesimbra (nomeado EMYA 2021) e Convento de Jesus 2024.</p></div>
+  <!-- Reservado: verificações DGPC, PDM, Ordem dos Arquitectos -->
+</section>
+
+<section id="p5">
+  <p class="label">P5 — SWOT</p>
+  <h2 class="display">SWOT</h2>
+  <p class="sub">Matriz 2×4. Dois pontos por quadrante; dois pontos decorrem de indicadores P1 (valor e ano entre parênteses).</p>
+  <div class="swot-grid">
+    <div class="q f"><h3>FORÇAS</h3><ul><li>Procura jovem — envelhec. Sesimbra 136,5 (2021) vs Portugal 182,1 (2021)</li><li>Ecótono lagoa-pinhal + branco/telha + Nortada 4,1 m/s</li></ul></div>
+    <div class="q w"><h3>FRAQUEZAS</h3><ul><li>Baixo valor — Sesimbra IpC &lt;100 (2023) vs Setúbal &gt;100, G.Lisboa 127,6 (2023)</li><li>Risco lote — Alto/M.Alto + sismo X + areia/freático sem geotecnia</li></ul></div>
+    <div class="q o"><h3>OPORTUNIDADES</h3><ul><li>Crescimento — +5,8% 2011–21 (52.384 em 2021), 56.576 (2024)</li><li>ZEC/ZPE + reuso (Carrilho 2024, EMYA 2021) + fundos</li></ul></div>
+    <div class="q t"><h3>AMEAÇAS</h3><ul><li>Pressão — Setúbal 536,2 hab/km² (2021) + 110,6d ≥25°/ano</li><li>APPS/REN + chuva 793,5mm (1991–2020) vs TMY 364mm</li></ul></div>
+  </div>
+  <p class="src-note">Prancha vetorial válida (P6): imagens/SWOT_P5_16x9.svg, 1920×1080.</p>
+</section>
+
+<section id="p6">
+  <p class="label">P6 — Volumetria e programa preliminar</p>
+  <h2 class="display">Volumetria e programa</h2>
+  <div class="vs">
+    <div class="card"><span class="badge">VA — Barra fina N-S, 1–2 pisos</span><p><b>+</b> Atravessa a Nortada; pala S resolve o pico de calor.<br><b>−</b> Frente W longa; faixa corta-fogo maior.</p></div>
+    <div class="card"><span class="badge">VB — Pátio em L</span><p><b>+</b> Pátio sombreado e ventilado a N-NW; preserva pinheiro.<br><b>−</b> Risco de retenção de calor/humidade; gestão de fogo.</p></div>
+  </div>
+  <table class="table" style="background:#fff;color:#1C2321;margin-top:16px">
+    <tr><th>Espaço (hipótese ~350 m²)</th><th>m²</th><th>un.</th><th>Nota</th></tr>
+    <tr><td>Fogo T2 pátio</td><td>65</td><td>3 = 195</td><td>E massa, S pala, N brisa</td></tr>
+    <tr><td>Estúdio investigador</td><td>35</td><td>1 = 35</td><td>W tampão</td></tr>
+    <tr><td>Sala comum + copa</td><td>60</td><td>1 = 60</td><td>S pérgola, tanque</td></tr>
+    <tr><td>Receção / loja / saúde</td><td>25</td><td>1 = 25</td><td>mínimo diário</td></tr>
+    <tr><td>Apoio / ETAR / cisterna</td><td>35</td><td>—</td><td>sem subsolo</td></tr>
+    <tr><td>Exterior: pátio / bosque / observatório</td><td colspan="2">300–500</td><td>buffer lagoa</td></tr>
+    <tr><td>Estacionamento 4 + bikes + água DFCI</td><td>—</td><td>4</td><td>2 acessos</td></tr>
+  </table>
+  <div class="acc">
+    <details open><summary>Incertezas <span>+</span></summary><p>Limite do lote e índice PDM/REN/APPS/ZEC; Vs30; água e saneamento; sombra/vento reais; procura e preço; gestão sazonal e fogo.</p></details>
+    <details><summary>A verificar no local <span>+</span></summary><p>1. Pinheiros, muros, cotas, fossas, acessos e faixa de gestão.<br>2. Freático, marcas de cheia, solo, brisa tarde vs manhã.<br>3. Uso da rua, ruído N377, serviços em Aiana/Alfarim.</p></details>
+  </div>
+  <!-- Reservado: desenvolvimentos seguintes do projeto -->
+</section>
+
+<section id="fim">
+  <p class="label">Grupo 8 — Documento de trabalho</p>
+  <h2 class="display">Península de Setúbal — Grupo 8</h2>
+  <p class="sub">Análise de sítio P1–P6. Sesimbra e Setúbal. 38.5133° N, 9.1604° W, 27 m. Grupo 8: Isabella Misiec (20221001) · Nuno Heleno (20181310) · Giovanna Meneghel (20221006). Documento a atualizar à medida do projeto.</p>
+  <div class="card" style="margin-top:24px;text-align:left;max-width:860px;margin-left:auto;margin-right:auto">
+    <h4>Declaração de autoria e de utilização de IA</h4>
+    <p>O grupo 8 declara ter utilizado o Muse Spark 1.3 Free nos prompts P0–P6, em setembro de 2026. Foram anexadas quatro imagens, ficheiro EPW Lisboa-Geof e ficha IPMA Lisboa / Instituto Geofísico 1991–2020. Foram verificados o sítio e as coordenadas, os dados climáticos do IPMA, a classificação Köppen-Geiger e os dados INE/Pordata. Foram rejeitados ou assinalados como não verificáveis os dados para os quais não foi possível confirmar uma fonte adequada. Tempo estimado de aceleração face ao procedimento manual: 2 h. Os signatários assumem integralmente a autoria.</p>
+    <p class="src">Isabella Misiec (20221001) · Nuno Heleno (20181310) · Giovanna Meneghel (20221006) — setembro de 2026.</p>
+  </div>
+  <footer><span>Fontes: INE · Pordata · IPMA · EPW Lisboa-Geof · ICNF · PDM/PULA</span><span>Imagens: maps_1km · maps_500m · ortofoto · SWOT_P5_16x9.svg</span><span>Versão v1.0.0 — 2026-09-21</span></footer>
+</section>
+
+<script>
+let n=0; const num=document.getElementById('loadNum'), bar=document.getElementById('loadBar');
+const iv=setInterval(()=>{ n+=Math.random()*14; if(n>=100){n=100;clearInterval(iv); setTimeout(()=>{document.getElementById('loader').classList.add('done'); document.querySelectorAll('#hero .reveal span').forEach((s,i)=>{gsap.to(s,{y:0,duration:1.1,delay:.15+i*.12,ease:'power4.out'})});},350);} num.textContent=Math.floor(n); bar.style.width=n+'%'; },120);
+gsap.registerPlugin(ScrollTrigger);
+const prog=document.getElementById('progress');
+ScrollTrigger.create({start:0,end:'max',onUpdate:s=>prog.style.width=(s.progress*100)+'%'});
+gsap.to('#heroBg img',{yPercent:18,ease:'none',scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:true}});
+gsap.to('#heroInner',{y:-60,opacity:.25,ease:'none',scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:true}});
+document.querySelectorAll('h2.display,.card,.q,.meter,.rule,.stat,.work-row').forEach(el=>{
+  gsap.from(el,{y:32,opacity:0,duration:.85,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%'}});
+});
+document.querySelectorAll('.bar i').forEach(b=>{
+  ScrollTrigger.create({trigger:b,start:'top 90%',once:true,onEnter:()=>gsap.to(b,{width:b.dataset.w+'%',duration:1.2,ease:'power3.out'})});
+});
+document.querySelectorAll('.countUp').forEach(c=>{
+  const to=parseFloat(c.dataset.to), dec=parseInt(c.dataset.dec||0);
+  ScrollTrigger.create({trigger:c,start:'top 90%',once:true,onEnter:()=>{
+    const o={v:0}; gsap.to(o,{v:to,duration:1.5,ease:'power2.out',onUpdate:()=>{c.textContent=o.v.toLocaleString('pt-PT',{minimumFractionDigits:dec,maximumFractionDigits:dec})}});
+  }});
+});
+const track=document.getElementById('htrack');
+if(track){ const getX=()=>track.scrollWidth-window.innerWidth+80;
+  gsap.to(track,{x:()=>-getX(),ease:'none',scrollTrigger:{trigger:'#hwrap',start:'top top',end:()=>'+='+(getX()),pin:true,scrub:1,invalidateOnRefresh:true}});
+}
+const dots=[...document.querySelectorAll('#dots a')];
+['#hero','#conceito','#p1','#p2','#p3','#p4','#p5','#p6'].forEach((s,i)=>{ ScrollTrigger.create({trigger:s,start:'top center',end:'bottom center',onToggle:self=>{ if(self.isActive){dots.forEach(d=>d.classList.remove('active')); if(dots[i])dots[i].classList.add('active');}}});});
+document.querySelectorAll('.work-row').forEach(r=>r.addEventListener('click',()=>document.querySelector(r.dataset.goto).scrollIntoView({behavior:'smooth'})));
+const ov=document.getElementById('overlay');
+document.getElementById('menuBtn').onclick=()=>ov.classList.add('open');
+document.getElementById('overlayClose').onclick=()=>ov.classList.remove('open');
+ov.querySelectorAll('a').forEach(a=>a.onclick=()=>ov.classList.remove('open'));
+const cur=document.getElementById('cursor');
+window.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';});
+document.querySelectorAll('.work-row,#overlay a.big,#paletaTrigger').forEach(el=>{el.addEventListener('mouseenter',()=>cur.classList.add('big'));el.addEventListener('mouseleave',()=>cur.classList.remove('big'));});
+// paleta interativa
+const palModal=document.getElementById('paletaModal'), palTrigger=document.getElementById('paletaTrigger');
+function openPaleta(){palModal.classList.add('open');palModal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';}
+function closePaleta(){palModal.classList.remove('open');palModal.setAttribute('aria-hidden','true');document.body.style.overflow='';}
+palTrigger.addEventListener('click',openPaleta);
+palTrigger.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openPaleta();}});
+document.getElementById('paletaClose').addEventListener('click',closePaleta);
+palModal.addEventListener('click',e=>{if(e.target===palModal)closePaleta();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePaleta();}});
+palModal.querySelectorAll('.cor-head').forEach(h=>h.addEventListener('click',()=>h.parentElement.classList.toggle('open')));
+</script>
+</body>
+</html>
