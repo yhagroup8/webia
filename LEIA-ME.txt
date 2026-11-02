@@ -1,0 +1,4 @@
+Abra sitegrupo8.html no navegador.
+Mantenha a pasta imagens junto ao ficheiro HTML.
+Todas as imagens estão guardadas nesta pasta e são carregadas por caminhos relativos.
+As fontes e as bibliotecas de animação continuam a usar os serviços externos do HTML original.
